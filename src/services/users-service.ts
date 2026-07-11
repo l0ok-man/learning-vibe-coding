@@ -89,3 +89,18 @@ export async function getCurrentUser(token: string) {
   // 2. Kembalikan data user
   return { success: true, data: result[0] };
 }
+
+export async function logoutUser(token: string) {
+  if (!token) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  const deleteResult = await db.delete(sessions).where(eq(sessions.token, token));
+  const affectedRows = (deleteResult[0] as any)?.affectedRows || 0;
+  
+  if (affectedRows === 0) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  return { success: true, data: "OK" };
+}
