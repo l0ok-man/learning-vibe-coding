@@ -63,3 +63,29 @@ export async function loginUser(body: any) {
   // 4. Kembalikan Response Sukses (Token)
   return { success: true, data: token };
 }
+
+export async function getCurrentUser(token: string) {
+  if (!token) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  // 1. Cari Session & Join dengan Users
+  const result = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      createdAt: users.createdAt,
+    })
+    .from(sessions)
+    .innerJoin(users, eq(sessions.userId, users.id))
+    .where(eq(sessions.token, token))
+    .limit(1);
+
+  if (result.length === 0) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  // 2. Kembalikan data user
+  return { success: true, data: result[0] };
+}
