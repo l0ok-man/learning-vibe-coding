@@ -95,12 +95,14 @@ export async function logoutUser(token: string) {
     return { error: true, status: 401, message: "unauthorized" };
   }
 
-  const deleteResult = await db.delete(sessions).where(eq(sessions.token, token));
-  const affectedRows = (deleteResult[0] as any)?.affectedRows || 0;
-  
-  if (affectedRows === 0) {
+  // 1. Cari Session terlebih dahulu (Dialect Agnostic)
+  const sessionList = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
+  if (sessionList.length === 0) {
     return { error: true, status: 401, message: "unauthorized" };
   }
+
+  // 2. Hapus Session jika ditemukan
+  await db.delete(sessions).where(eq(sessions.token, token));
 
   return { success: true, data: "OK" };
 }
