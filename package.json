@@ -1,0 +1,20 @@
+{
+  "name": "learning-vibe-coding",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "db:generate": "bunx drizzle-kit generate",
+    "db:push": "bunx drizzle-kit push",
+    "db:studio": "bunx drizzle-kit studio"
+  },
+  "dependencies": {
+    "elysia": "^1.0.0",
+    "drizzle-orm": "^0.30.0",
+    "mysql2": "^3.9.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.21.0",
+    "@types/node": "^20.11.0"
+  }
+}
