@@ -89,3 +89,20 @@ export async function getCurrentUser(token: string) {
   // 2. Kembalikan data user
   return { success: true, data: result[0] };
 }
+
+export async function logoutUser(token: string) {
+  if (!token) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  // 1. Cari Session terlebih dahulu (Dialect Agnostic)
+  const sessionList = await db.select().from(sessions).where(eq(sessions.token, token)).limit(1);
+  if (sessionList.length === 0) {
+    return { error: true, status: 401, message: "unauthorized" };
+  }
+
+  // 2. Hapus Session jika ditemukan
+  await db.delete(sessions).where(eq(sessions.token, token));
+
+  return { success: true, data: "OK" };
+}
